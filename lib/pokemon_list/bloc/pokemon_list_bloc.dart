@@ -21,10 +21,8 @@ class PokemonListBloc extends Bloc<PokemonListEvent, PokemonListState> {
 
   FutureOr<void> fetchFirst(
       PokemonListInitialEvent event, Emitter<PokemonListState> emit) async {
-    print("hei");
     if (!isLoading) {
       isLoading = true;
-      print("Loading...");
       try {
         PokemonListModel? pokemonModel =
             await pokemonService.getPokemonList(nextUrl);
@@ -33,7 +31,6 @@ class PokemonListBloc extends Bloc<PokemonListEvent, PokemonListState> {
         } else {
           pokemonList.addAll(pokemonModel.results);
           nextUrl = pokemonModel.next ?? "";
-          print(nextUrl);
           if (pokemonModel.next == null || pokemonModel.next == "") {
             emit(CompletedLoadPokemons(pokemonList: pokemonList));
             // yield CompletedLoadPokemons(pokemonList: pokemonList);
@@ -43,7 +40,6 @@ class PokemonListBloc extends Bloc<PokemonListEvent, PokemonListState> {
           }
         }
       } catch (e) {
-        print(e.toString());
         // yield ErrorState(message: "Failed to fetch the pokemons");
         emit(ErrorState(message: "Failed to fetch the pokemons"));
       }
@@ -55,7 +51,6 @@ class PokemonListBloc extends Bloc<PokemonListEvent, PokemonListState> {
       PokemonListFetchEvent event, Emitter<PokemonListState> emit) async {
     if (!isLoading) {
       isLoading = true;
-      print("Loading...");
       try {
         PokemonListModel? pokemonModel =
             await pokemonService.getPokemonList(nextUrl);
@@ -73,7 +68,6 @@ class PokemonListBloc extends Bloc<PokemonListEvent, PokemonListState> {
           }
         }
       } catch (e) {
-        print("hei");
         // yield ErrorState(message: "Failed to fetch the pokemons");
         emit(ErrorState(message: "Failed to fetch the pokemons"));
       }

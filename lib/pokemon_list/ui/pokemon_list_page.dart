@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pokemon/pokemon_detail/ui/pokemon_detail_page.dart';
 import 'package:pokemon/pokemon_list/bloc/pokemon_list_bloc.dart';
 
 class PokemonListPage extends StatefulWidget {
@@ -19,7 +20,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
     if (match != null) {
       String pokemonId = match.group(1)!;
-      print(pokemonId);
       return pokemonId;
     } else {
       return "No ID found in the URL";
@@ -30,11 +30,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
   void initState() {
     super.initState();
     pokemonListBloc.add(PokemonListInitialEvent());
-    if (pokemonListBloc.isLoading) {
-      print("INIT");
-    } else {
-      print("INIT2");
-    }
   }
 
   @override
@@ -65,22 +60,45 @@ class _PokemonListPageState extends State<PokemonListPage> {
                           padding: index % 2 == 0
                               ? const EdgeInsets.only(left: 12)
                               : const EdgeInsets.only(right: 12),
-                          child: Card(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
                             child: InkWell(
                               onTap: () {
-                                print("yuhu");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => PokemonDetailPage(
+                                              pokemonUrl: pokemonListBloc
+                                                  .pokemonList[index].url,
+                                            )));
                               },
                               child: Stack(
                                 // crossAxisAlignment: CrossAxisAlignment.start,
                                 // mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Positioned(
+                                      bottom: -30,
+                                      right: -30,
+                                      child: Opacity(
+                                        opacity: 0.5,
+                                        child: Image.asset(
+                                          "assets/pokeball.png",
+                                          width: 160,
+                                        ),
+                                      )),
+                                  Positioned(
                                       top: 10,
                                       left: 10,
                                       child: Text(
                                         pokemonListBloc.pokemonList[index].name
                                             .capitalize(),
-                                        style: const TextStyle(fontSize: 20),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                         overflow: TextOverflow.ellipsis,
                                       )),
                                   Positioned(
@@ -102,16 +120,16 @@ class _PokemonListPageState extends State<PokemonListPage> {
                               mainAxisSpacing: 10)),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   child: Center(
                     child: pokemonListBloc.isLoading
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : (state is LoadedPokemons)
                             ? TextButton(
                                 onPressed: () {
                                   pokemonListBloc.add(PokemonListFetchEvent());
                                 },
-                                child: Text("Load More"))
+                                child: const Text("Load More"))
                             : Container(),
                   ),
                 ),
